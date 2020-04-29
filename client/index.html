@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Second Programming Summative</title>
+    <meta name="description" content="summative assignment">
+    <meta name="author" content="Elias Percy">
+  
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>  
+    <script src="index.js" defer></script>
+
+  </head>
+
+  <body>
+
+  <div class="navbar" id="notificationBar">
+      <h6>Notification Bar</h6>
+      <h6 id="notification"></h6>
+  </div>
+    
+    <main>
+    <div class="box">
+
+      <div id="dataAdding" class="accordion">
+
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <!-- <h5 class="mb-0"> -->
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Albums
+              </button>
+            <!-- </h5> -->
+          </div>
+      
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#dataAdding">
+            <div class="card-body">
+              <div class="row">
+    
+                <div class="col-md-9">
+
+                  <form  id='albumAddingForm' method="POST" enctype="multipart/form-data">
+                    <input type="text" name="title" id="albumTitle" placeholder="Title">
+                    <input type="text" name="artist" id="albumArtist" placeholder="Artist">
+                    <input type="text" name="releaseYear" id="albumReleaseYear" placeholder="Release Year">
+                    <input type="file" name="albumCover" id="albumCover" class="albumCover" placeholder="Cover" accept="image/*">
+                    <button id="albumsPost" type="submit">Add</button>
+                  </form>
+
+                </div>
+                <div class="col-md-3">
+                  <button id="albumsGet" type="button" method="GET">GET</button> 
+                </div> 
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="card">
+          <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+              <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Books
+              </button>
+            </h5>
+          </div>
+
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#dataAdding">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-9">
+
+                  <form  id='bookAddingForm' method="POST" enctype="multipart/form-data">
+                    <input type="text" name="title" id="bookTitle" placeholder="Title">
+                    <input type="text" name="author" id="bookAuthor" placeholder="Author">
+                    <input type="text" name="releaseYear" id="bookReleaseYear" placeholder="Release Year">
+                    <input type="file" name="bookCover" id="bookCover" placeholder="Cover" accept="image/*">
+                    <button id="booksPost" type="submit">Add</button>
+                  </form>
+
+                </div>
+                <div class="col-md-3">
+                  <button id="booksGet" type="button">GET</button> 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="card">
+          <div class="card-header" id="headingThree">
+            <h5 class="mb-0">
+              <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Films
+              </button>
+            </h5>
+          </div>
+
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#dataAdding">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-9">
+
+                  <form  id='filmAddingForm' method="POST" enctype="multipart/form-data">
+                    <input type="text" name="title" id="filmTitle" placeholder="Title">
+                    <input type="text" name="director" id="filmDirector" placeholder="Director">
+                    <input type="text" name="releaseYear" id="filmReleaseYear" placeholder="Release Year">
+                    <input type="file" name="filmPoster" id="filmPoster" placeholder="Poster" accept="image/*">
+                    <button id="filmsPost" type="submit">Add</button>
+                  </form>
+
+                </div>
+                <div class="col-md-3">
+                  <button id="filmsGet" type="button">GET</button> 
+                </div>  
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row" id="theData">
+        <div class="col-md-4"> 
+
+          <div id="lists">
+
+            <div class="card">
+          
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#lists">
+                <div class="card-body">
+                  <div class="theAlbums" id="scrollable">
+                    <h6 id="theAlbums"></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+      
+            <div class="card">
+      
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#lists">
+                <div class="card-body">
+                  <div class="theBooks" id="scrollable">
+                    <h6 id="theBooks"></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+      
+            <div class="card">
+      
+              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#lists">
+                <div class="card-body">
+                  <div class="theFilms" id="scrollable">
+                    <h6 id="theFilms"></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div id='filters'>
+
+            <div class="card">
+          
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#filters">
+                <div class="card-body">
+                  <div id="albumsSort">
+                    <button id="albumArtistSort" type="button">Sort by Artist</button> 
+                    <button id="albumTitleSort" type="button">Sort by Title</button> 
+                    <button id="albumYearSort" type="button">Sort by Year</button> 
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="card">
+      
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#filters">
+                <div class="card-body">
+                  <div id="booksSort">
+                    <button id="bookAuthorSort" type="button">Sort by Author</button> 
+                    <button id="bookTitleSort" type="button">Sort by Title</button> 
+                    <button id="bookYearSort" type="button">Sort by Year</button> 
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="card">
+      
+              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#filters">
+                <div class="card-body">
+                  <div id="filmsSort">
+                    <button id="filmDirectorSort" type="button">Sort by Director</button> 
+                    <button id="filmTitleSort" type="button">Sort by Title</button> 
+                    <button id="filmYearSort" type="button">Sort by Year</button> 
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-md-4" id="display">
+          <img id="pic" />
+        </div>
+
+        <div class="col-md-4" id="scrollable"> 
+          <div id = sortBtns>
+          <button id="showAll" type="button">Show All</button> 
+          <button id="read" type="button">Read</button> 
+          <button id="unread" type="button">Unread</button> 
+          <form id="yearFinderForm">
+            <input type="text" name="yearFinder" id="yearFinder" placeholder="Show ALL items from year...">
+            <button id="yearFinderSubmit" type="submit">Show</button>
+          </form>
+          </div>
+          <!-- <h6> <br> Sorted Items: </h6> -->
+
+          <p id="theCharts">
+            <br>
+            Sorted items will be displayed here.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+  <!-- <div class="row">
+    <p><br></p>
+  </div> -->
+  <!-- <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-3">
+      <button id="randomSelect" type="button">Select random...</button>
+    </div> 
+  </div> -->
+
+  </body>
+
+</html>

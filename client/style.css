@@ -1,0 +1,82 @@
+body {
+  color: #2c3e50;
+  background: #ecf0f1;
+  padding: 0 1em 1em;
+}
+
+h1 {
+  margin: 0;
+  line-height: 2;
+  text-align: center;
+}
+
+h2 {
+  margin: 0 0 0.5em;
+  font-weight: normal;
+}
+
+input {
+  z-index: -1; 
+}
+
+.row {
+  display: flex;
+}
+
+.row .col {
+  flex: 1;
+}
+
+.row .col:last-child {
+  margin-left: 1em;
+}
+
+
+
+#scrollable {
+  flex-grow : 1;
+  overflow-y: auto;
+}
+
+.navbar {
+  overflow: hidden;
+  background-color: #333;
+  height: 60px;
+  position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+}
+
+.navbar h6 {
+  color: #f2f2f2;
+}
+
+.box {
+  margin-top: 1px; /* Add a top margin to avoid content overlay */
+}
+
+#display {
+  text-align: center;
+  display: block;
+}
+
+#pic {
+  display: none;
+  /* height: 500px; */
+  width: auto;
+}
+
+#albumsSort {
+  display: none;
+}
+
+#booksSort {
+  display: none;
+}
+#filmsSort {
+  display: none;
+}            
+
+#sortBtns {
+  display: none;
+}
