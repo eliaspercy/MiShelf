@@ -1,3 +1,5 @@
+// note: essentially all of the comments that appear in the "albums.js" file are relevant, perhaps only with slight alterations, to this file also, as the following is substantially based off of that file - with minor adjustments 
+
 const express = require('express');
 const fs = require('fs');
 const multer = require('multer');
@@ -8,7 +10,7 @@ const id = uniqid();
 
 // set storage for film images
 const storage = multer.diskStorage({
-  destination: './api/films/filmImages/',
+  destination: './client/filmFiles/',
   filename(req, file, cb) {
     cb(null, id + path.extname(file.originalname));
   },
@@ -27,12 +29,14 @@ router.get('/', (req, res, next) => {
   res.status(200).send(listOfFilms);
 });
 
-router.post('/', upload, (req, res, next) => {
+router.post('/add', upload, (req, res, next) => {
+  const filePath = `http://localhost:3000/filmFiles/${req.file.filename}`
   const newFilm = {
     title: req.body.title,
     director: req.body.director,
     releaseYear: req.body.releaseYear,
     filmPoster: req.file.destination + req.file.filename,
+    path: filePath,
     Id: id,
   };
   listOfFilms.push(newFilm);

@@ -1,13 +1,19 @@
+//note: possibly add a search bar for items... if have time
+
 // const albumsGet = document.getElementById('albumsGet');
 // const albumAddingForm = document.getElementById('albumAddingForm');
 const notificationText = document.getElementById('notification');
 const theAlbums = document.getElementById('theAlbums');
+const theAlbumsText = document.getElementById('theAlbumsText');
 const theBooks = document.getElementById('theBooks');
+const theBooksText = document.getElementById('theBooksText');
 const theFilms = document.getElementById('theFilms');
+const theFilmsText = document.getElementById('theFilmsText');
 const displayArea = document.getElementById('display');
 const pic = document.getElementById('pic');
 const getZone = document.getElementById('scrollable');
 const charts = document.getElementById('theCharts');
+const chartsText = document.getElementById('theChartsText');
 const fiters = document.getElementById('fitlers');
 const albumsSort = document.getElementById('albumsSort');
 const booksSort = document.getElementById('booksSort');
@@ -22,28 +28,37 @@ const bookYearSort = document.getElementById('bookYearSort');
 const filmDirectorSort = document.getElementById('filmDirectorSort');
 const filmTitleSort = document.getElementById('filmTitleSort');
 const filmYearSort = document.getElementById('filmYearSort');
-
+const randomAlbum = document.getElementById('albumRandomSelect');
+const randomBook= document.getElementById('bookRandomSelect');
+const randomFilm = document.getElementById('filmRandomSelect');
 const showAll = document.getElementById('showAll');
 const ifRead = document.getElementById('read');
 const ifUnread = document.getElementById('unread');
+const randomItemSelector = document.getElementById('randomSelect');
+const randomBtn = document.getElementById('randomBtn');
+const randomAlbumDiv = document.getElementById('randomAlbum');
+const randomBookDiv = document.getElementById('randomBook');
+const randomFilmDiv = document.getElementById('randomFilm');
 
 
-var listOfAlbums;
-var listOfBooks;
-var listOfFilms;
 
-var listened = [];
-var unlistened = [];
-var read = [];
-var unread = [];
-var watched = [];
-var unwatched = [];
+let listOfAlbums;
+let listOfBooks;
+let listOfFilms;
+
+const listened = [];
+const unlistened = [];
+const read = [];
+const unread = [];
+const watched = [];
+const unwatched = [];
 
 pic.src = 'placeholder.jpg';
 
 const { body } = document;
 const html = document.documentElement;
 
+// calculating the clients genuine height and applying values for the height of the picture-containing div in addition to the height of any inter-scrollable divs within the page
 const height = Math.max(
   body.scrollHeight,
   body.offsetHeight,
@@ -52,17 +67,33 @@ const height = Math.max(
   html.offsetHeight,
 );
 const picHeight = height - 400;
-const scrollHeight = picHeight - 60;
+const scrollHeight = picHeight - 165;
+
+const width = Math.max(
+  body.scrollWidth,
+  body.offsetWidth,
+  html.clientWidth,
+  html.scrollWidth,
+  html.offsetWidth,
+);
 
 
+// initializing text in the HTML
 notificationText.innerHTML = 'Welcome back fella!';
-theAlbums.innerHTML = 'Click GET for list of albums';
-theBooks.innerHTML = 'Click GET for list of books';
-theFilms.innerHTML = 'Click GET for list of films';
+theAlbumsText.innerHTML = 'Click GET for list of albums';
+theBooksText.innerHTML = 'Click GET for list of books';
+theFilmsText.innerHTML = 'Click GET for list of films';
 
+// function for catching errors after a 
+function errorCatch(err) {
+  console.log(err);
+  notificationText.innerHTML = `Oops, something went wrong! (${err})`;
+  if (err.message === 'NetworkError when attempting to fetch resource.') {
+    alert('The server is not running!');
+  };
+};
 
-
-
+// catch-all function for sending HTTP requests
 const sendHttpRequest = async (method, url, itemType, data, item) => fetch(url, {
   method,
   body: (method === 'DELETE') ? JSON.stringify(data) : data,
@@ -82,14 +113,20 @@ const sendHttpRequest = async (method, url, itemType, data, item) => fetch(url, 
   return response;
 });
 
+// function for capitalising the premier letter of a string, applied when inserting itemType variables into the HTML in cases where the itemType is at the beginning of the sentence or is a header
+function capitalise(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+};
 
+// words and phrases used for incorporation into notification text
 const words = ['Groovy', 'Excellent', 'How cool', 'Nice one', 'Sweet', 'Swell', 'Utter pengness', 'Rate that', 'Coolio'];
 
-
+// generates a totally random number, using maths
 function randGen(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+// generates the sentence appearing in the notification bar following a successful HTTP request
 function sentence(textDestination, method, itemType, data) {
   if (method === 'POST') {
     if (itemType === 'album') {
@@ -118,9 +155,24 @@ function sentence(textDestination, method, itemType, data) {
   }
 }
 
+
+// uses the file location to exhibit the image associated with the corresponding item
+function displayImage(path) {
+  pic.src = path;
+  pic.style.display = 'block';
+  pic.style.height = `${picHeight}px`;
+  pic.style.maxWidth = `${width}px`; // work on this... ************
+};
+
+// randomly chooses an item from a list, conveyed via the notification bar 
 function randomSelect(itemType, items) {
-  notificationText.innerHTML = `Random ${itemType} selected: ${randGen(items)}`;
-}
+  if (items.length === 0) {
+    notificationText.innerHTML = "Can't randomly select from nothing!";
+  };
+  randomItem = randGen(items);
+  notificationText.innerHTML = `Random ${itemType} selected: ${randomItem.title} by ${(itemType === 'album') ? randomItem.artist : (itemType === 'book') ? randomItem.author : randomItem.director}. ${randGen(words)}!`;
+  displayImage(randomItem.path);
+};
 
 
 function appender(itemType, data, i) {
@@ -132,539 +184,359 @@ function appender(itemType, data, i) {
   whiteSpace.innerHTML = '<br>';
   newLine.setAttribute('id', itemType + (i + 1).toString());
   newLine.setAttribute('class', data.title);
-
-
+  tempIds = [];
+  untempIds = [];
+  let k = 0;
+  for (k = 0; k < read.length; k++) {
+    tempIds.push(read[k].Id);
+  };
+  for (k = 0; k < unread.length; k++) {
+    untempIds.push(unread[k].Id);
+  };
+  if (tempIds.includes(data.Id)) {
+    newLine.style.color = 'green';
+  } else if (untempIds.includes(data.Id)) {
+    newLine.style.color = 'red';
+  };
+  let path;
+  let txt;
   if (itemType === 'album') {
-
-    let listenedIds = []
-    let unlistenedIds = []
-    let k = 0
-    for (k = 0; k < listened.length; k++) {
-      listenedIds.push(listened[k].Id);
-    };
-    for (k = 0; k < unlistened.length; k++) {
-      unlistenedIds.push(unlistened[k].Id);
-    };
-    if (listenedIds.includes(data.Id)) {
-      newLine.style.color = 'green';
-    } else if (unlistenedIds.includes(data.Id)) {
-      newLine.style.color = 'red';
-    };
-
-    newLine.innerHTML = `<strong>${data.title}</strong> by <strong>${data.artist}</strong> (${data.releaseYear}) <b>`;
-
-    deleteBtn.innerHTML = 'Delete album';
-    deleteBtn.onclick = async () => {
-      notificationText.innerHTML = 'Deleting album...';
-      sendHttpRequest('DELETE', `http://localhost:3000/albums/${data.Id}`, 'album', data, data);
-    };
-
-    displayBtn.innerHTML = 'Show cover';
-    displayBtn.onclick = async () => {
-      const sourceOfPicture = `.${data.albumCover}`;
-      pic.src = sourceOfPicture;
-      pic.style.display = 'block';
-      pic.style.height = `${picHeight}px`;
-    };
-
-    newLine.onclick = async () => {
-      if (!newLine.style.color) {
-        newLine.style.color = 'green';
-        listened.push(data);
-        notificationText.innerHTML = `Marked ${data.title} as listened`;
-
-      } else if (newLine.style.color === 'green') {
-        newLine.style.color = 'red';
-        unlistened.push(data);
-        let j = 0;
-        for (j = 0; j < listened.length; j++) {
-          if (listened[j].Id === data.Id) {
-            listened.splice(j, 1);
-            break;
-          };  
-        };
-        notificationText.innerHTML = `Marked ${data.title} as unlistened`;
-
-      } else {
-        newLine.style.color = null;
-        let j = 0;
-        for (j = 0; j < unlistened.length; j++) {
-          if (unlistened[j].Id === data.Id) {
-            unlistened.splice(j, 1);
-            break;
-          };  
-        };
-        notificationText.innerHTML = `Unmarked ${data.title}`;
-      };
-    };
+    newLine.innerHTML = `<strong>${data.title}</strong>, recorded by <strong>${data.artist}</strong> (${data.releaseYear}) <b>`;
+    txt = 'listened';
   } else if (itemType === 'book') {
-
-    let readIds = []
-    let unreadIds = []
-    let k = 0
-    for (k = 0; k < read.length; k++) {
-      readIds.push(read[k].Id);
-    };
-    for (k = 0; k < unread.length; k++) {
-      unreadIds.push(unread[k].Id);
-    };
-    if (readIds.includes(data.Id)) {
-      newLine.style.color = 'green';
-    } else if (unreadIds.includes(data.Id)) {
-      newLine.style.color = 'red';
-    };
-
-    newLine.innerHTML = `<strong>${data.title}</strong> by <strong>${data.author}</strong> (${data.releaseYear}) <b>`;
-    deleteBtn.innerHTML = 'Delete book';
-    deleteBtn.onclick = async () => {
-      notificationText.innerHTML = 'Deleting book...';
-      sendHttpRequest('DELETE', `http://localhost:3000/books/${data.Id}`, 'book', data, data);
-    };
-    displayBtn.innerHTML = 'Show cover';
-    displayBtn.onclick = async () => {
-      const sourceOfPicture = `.${data.bookCover}`;
-      pic.src = sourceOfPicture;
-      pic.style.display = 'block';
-      pic.style.height = `${picHeight}px`;
-    };
-    newLine.onclick = async () => {
-      if (!newLine.style.color) {
-        newLine.style.color = 'green';
-        read.push(data);
-        notificationText.innerHTML = `Marked ${data.title} as read`;
-
-      } else if (newLine.style.color === 'green') {
-        newLine.style.color = 'red';
-        unread.push(data);
-        let j = 0;
-        for (j = 0; j < read.length; j++) {
-          if (read[j].Id === data.Id) {
-            read.splice(j, 1);
-            break;
-          };  
-        };
-        notificationText.innerHTML = `Marked ${data.title} as unread`;
-        
-      } else {
-        newLine.style.color = null;
-        let j = 0;
-        for (j = 0; j < unread.length; j++) {
-          if (unread[j].Id === data.Id) {
-            unread.splice(j, 1);
-            break;
-          };  
-        };
-        notificationText.innerHTML = `Unmarked ${data.title}`;
-      };
-    };
+    newLine.innerHTML = `<strong>${data.title}</strong>, written by <strong>${data.author}</strong> (${data.releaseYear}) <b>`;
+    txt = 'read';
   } else if (itemType === 'film') {
-
-    let watchedIds = []
-    let unwatchedIds = []
-    let k = 0
-    for (k = 0; k < watched.length; k++) {
-      watchedIds.push(watched[k].Id);
-    };
-    for (k = 0; k < unwatched.length; k++) {
-      unwatchedIds.push(unwatched[k].Id);
-    };
-    if (watchedIds.includes(data.Id)) {
-      newLine.style.color = 'green';
-    } else if (unwatchedIds.includes(data.Id)) {
-      newLine.style.color = 'red';
-    };
-
     newLine.innerHTML = `<strong>${data.title}</strong>, directed by <strong>${data.director}</strong> (${data.releaseYear}) <b>`;
-    deleteBtn.innerHTML = 'Delete film';
-    deleteBtn.onclick = async () => {
-      notificationText.innerHTML = 'Deleting film...';
-      sendHttpRequest('DELETE', `http://localhost:3000/films/${data.Id}`, 'film', data, data);
-    };
-    displayBtn.innerHTML = 'Show poster';
-    displayBtn.onclick = async () => {
-      const sourceOfPicture = `.${data.filmPoster}`;
-      pic.src = sourceOfPicture;
-      pic.style.display = 'block';
-      pic.style.height = `${picHeight}px`;
-    };
-    newLine.onclick = async () => {
-      if (!newLine.style.color) {
-        newLine.style.color = 'green';
-        watched.push(data);
-        notificationText.innerHTML = `Marked ${data.title} as watched`;
-
-      } else if (newLine.style.color === 'green') {
-        newLine.style.color = 'red';
-        unwatched.push(data);
-        let j = 0;
-        for (j = 0; j < watched.length; j++) {
-          if (watched[j].Id === data.Id) {
-            watched.splice(j, 1);
-            break;
-          };  
+    txt = 'watched';
+  };
+  deleteBtn.innerHTML = `Delete ${itemType}`;
+  deleteBtn.onclick = () => {
+    notificationText.innerHTML = `Deleting ${itemType}...`;
+    sendHttpRequest('DELETE', `http://localhost:3000/${itemType}s/${data.Id}`, itemType, data, data)
+      .catch((err) => {
+        errorCatch(err);
+      });
+  };
+  displayBtn.innerHTML = `Show ${(itemType === 'film') ? 'poster' : 'cover'}`;
+  displayBtn.onclick = () => {
+    displayImage(data.path);
+  };
+  newLine.onclick = () => {
+    if (!newLine.style.color) {
+      newLine.style.color = 'green';
+      read.push(data);
+      notificationText.innerHTML = `Marked ${data.title} as ${txt}`;
+    } else if (newLine.style.color === 'green') {
+      newLine.style.color = 'red';
+      unread.push(data);
+      let j = 0;
+      for (j = 0; j < read.length; j++) {
+        if (read[j].Id === data.Id) {
+          read.splice(j, 1);
+          break;
         };
-        notificationText.innerHTML = `Marked ${data.title} as unwatched`;
-        
-      } else {
-        newLine.style.color = null;
-        let j = 0;
-        for (j = 0; j < unwatched.length; j++) {
-          if (unwatched[j].Id === data.Id) {
-            unwatched.splice(j, 1);
-            break;
-          };  
-        };
-        notificationText.innerHTML = `Unmarked ${data.title}`;
       };
+      notificationText.innerHTML = `Marked ${data.title} as un${txt}`;
+    } else {
+      newLine.style.color = null;
+      let j = 0;
+      for (j = 0; j < unread.length; j++) {
+        if (unread[j].Id === data.Id) {
+          unread.splice(j, 1);
+          break;
+        };
+      };
+      notificationText.innerHTML = `Unmarked ${data.title}`;
     };
-  }
-
+  };
   newItem.append(newLine);
   newItem.append(displayBtn);
   newItem.append(deleteBtn);
   newItem.append(whiteSpace);
-
   return newItem;
-}
+};
+
+var theItems;
+var itemsSort;
+var theItemsText;
+var randomItemDiv;
+
+function getRequest(itemType) {
+  notificationText.innerHTML = `Retrieving ${itemType}s...`;
+  if (itemType === 'album') {
+    theItems = theAlbums;
+    itemsSort = albumsSort;
+    theItemsText = theAlbumsText;
+    randomItemDiv = randomAlbumDiv;
+  } else if (itemType === 'book') {
+    theItems = theBooks;
+    itemsSort = booksSort;
+    theItemsText = theBooksText;
+    randomItemDiv = randomBookDiv;
+  } else if (itemType === 'film') {
+    theItems = theFilms;
+    itemsSort = filmsSort;
+    theItemsText = theFilmsText;
+    randomItemDiv = randomFilmDiv;
+  };
+  theItems.style.height = `${scrollHeight}px`;
+  itemsSort.style.display = 'block';
+  randomItemDiv.style.display = 'block';
+  theItems.innerHTML = '';
+  sendHttpRequest('GET', `http://localhost:3000/${itemType}s`, itemType)
+    .then((responseData) => {
+      if (responseData.length === 0) {
+        theItemsText.innerHTML = `No ${itemType}s have been added! <br> <br>`;
+      } else {
+        theItemsText.innerHTML = `${capitalise(itemType)}s: (click GET to update) <br> <br>`;
+        let i;
+        for (i = 0; i < responseData.length; i++) {
+          theItems.append(appender(itemType, responseData[i], i, responseData));
+        }
+      };
+      if (itemType === 'album') {
+        listOfAlbums = responseData;
+      } else if (itemType === 'book') {
+        listOfBooks = responseData;
+      } else if (itemType === 'film') {
+        listOfFilms = responseData;
+      };
+    })
+    .catch((err) => {
+      errorCatch(err);
+    });
+};
+
+
+function postRequests(itemType, form) {
+  notificationText.innerHTML = `Adding ${itemType}s...`;
+  const fd = new FormData(form);
+  if (itemType === 'album') {
+    data = {
+      title: fd.get('title'),
+      artist: fd.get('artist'),
+      releaseYear: fd.get('releaseYear'),
+      albumCover: fd.get('albumCover'),
+    };
+  } else if (itemType === 'book') {
+    data = {
+      title: fd.get('title'),
+      author: fd.get('author'),
+      releaseYear: fd.get('releaseYear'),
+      bookCover: fd.get('bookCover'),
+    };
+  } else if (itemType === 'film') {
+    data = {
+      title: fd.get('title'),
+      director: fd.get('director'),
+      releaseYear: fd.get('releaseYear'),
+      filmPoster: fd.get('filmPoster'),
+    };
+  };
+  if (!data.title || !(data.artist || data.author || data.director) || !data.releaseYear || !(data.albumCover || data.bookCover || data.filmPoster)) {
+    notificationText.innerHTML = `Tried to add ${(itemType === 'album') ? 'an' : 'a'} ${itemType}... but failed!`;
+    return alert('Insufficient input!');
+  };
+  sendHttpRequest('POST', `http://localhost:3000/${itemType}s/add`, itemType, fd, data)
+    .then((responseData) => {
+    })
+    .catch((err) => {
+      errorCatch(err);
+    });
+};
+
 
 
 // albums
-albumsGet.onclick = async () => {
-  notificationText.innerHTML = 'Retrieving albums...';
-  // pic.src = '';
-  theAlbums.style.height = `${scrollHeight}px`;
-  albumsSort.style.display = 'block';
-  sendHttpRequest('GET', 'http://localhost:3000/albums', 'album')
-    .then((responseData) => {
-      console.log(responseData);
-      if (responseData.length === 0) {
-        theAlbums.innerHTML = 'No albums have been added! <br> <br>';
-      } else {
-        theAlbums.innerHTML = 'Albums: (click GET to update) <br> <br>';
-        let i;
-        for (i = 0; i < responseData.length; i++) {
-          theAlbums.append(appender('album', responseData[i], i, responseData));
-        };
-      };
-      listOfAlbums = responseData;
-    })
-    .catch((err) => {
-      console.log(err);
-      notificationText.innerHTML = `Oops, something went wrong! (${err})`;
-    });
-};
-
-
-albumAddingForm.onsubmit = async (e) => {
+albumsGet.onclick = () => { getRequest('album') }
+albumAddingForm.onsubmit = (e) => {
   e.preventDefault();
-  notificationText.innerHTML = 'Adding album...';
-
-  const fd = new FormData(albumAddingForm);
-
-  data = {
-    title: fd.get('title'),
-    artist: fd.get('artist'),
-    releaseYear: fd.get('releaseYear'),
-    albumCover: fd.get('albumCover'),
-  };
-
-  console.log(data);
-  if (!data.title || !data.artist || !data.releaseYear || !data.albumCover) {
-    notificationText.innerHTML = 'Tried to add an album... but failed!';
-    return alert('Insufficient input!');
-  }
-  sendHttpRequest('POST', 'http://localhost:3000/albums', 'album', fd, data)
-    .then((responseData) => {
-      console.log(responseData);
-    })
-    .catch((err) => {
-      console.log(err);
-      notificationText.innerHTML = `Oops, something went wrong! (${err})`;
-    });
+  postRequests('album', albumAddingForm);
 };
+randomAlbum.onclick = () => { randomSelect('album', listOfAlbums) };
 
 
 // books
-booksGet.onclick = async () => {
-  notificationText.innerHTML = 'Retrieving books...';
-  // pic.src = '';
-  theBooks.style.height = `${scrollHeight}px`;
-  booksSort.style.display = 'block';
-  sendHttpRequest('GET', 'http://localhost:3000/books', 'book')
-    .then((responseData) => {
-      console.log(responseData);
-      // listOfBooks = responseData;
-      if (responseData.length === 0) {
-        theBooks.innerHTML = 'No books have been added! <br> <br>';
-      } else {
-        theBooks.innerHTML = 'Books: (click GET to update) <br> <br>';
-        let i;
-        for (i = 0; i < responseData.length; i++) {
-          theBooks.append(appender('book', responseData[i], i, responseData));
-        };
-      };
-      listOfBooks = responseData;
-    })
-    .catch((err) => {
-      console.log(err);
-      notificationText.innerHTML = `Oops, something went wrong! (${err})`;
-    });
-};
-
-bookAddingForm.onsubmit = async (e) => {
+booksGet.onclick = () => { getRequest('book') }
+bookAddingForm.onsubmit = (e) => {
   e.preventDefault();
-  notificationText.innerHTML = 'Adding book...';
-
-  const fd = new FormData(bookAddingForm);
-
-  data = {
-    title: fd.get('title'),
-    author: fd.get('author'),
-    releaseYear: fd.get('releaseYear'),
-    bookCover: fd.get('bookCover'),
-  };
-
-  if (!data.title || !data.author || !data.releaseYear || !data.bookCover) {
-    notificationText.innerHTML = 'Tried to add a book... but failed!';
-    return alert('Insufficient input!');
-  }
-  sendHttpRequest('POST', 'http://localhost:3000/books', 'book', fd, data)
-    .then((responseData) => {
-      console.log(responseData);
-    })
-    .catch((err) => {
-      console.log(err);
-      notificationText.innerHTML = `Oops, something went wrong! (${err})`;
-    });
+  postRequests('book', bookAddingForm);
 };
+randomBook.onclick = () => { randomSelect('book', listOfBooks) };
 
 
 // films
-filmsGet.onclick = async () => {
-  notificationText.innerHTML = 'Retrieving films...';
-  // pic.src = '';
-  theFilms.style.height = `${scrollHeight}px`;
-  filmsSort.style.display = 'block';
-  sendHttpRequest('GET', 'http://localhost:3000/films', 'film')
-    .then((responseData) => {
-      console.log(responseData);
-      // listOfFilms = responseData;
-      if (responseData.length === 0) {
-        theFilms.innerHTML = 'No films have been added! <br> <br>';
-      } else {
-        theFilms.innerHTML = 'Films: (click GET to update) <br> <br>';
-        let i;
-        for (i = 0; i < responseData.length; i++) {
-          theFilms.append(appender('film', responseData[i], i, responseData));
-        };
-      };
-      listOfFilms = responseData;
-    })
-    .catch((err) => {
-      console.log(err);
-      notificationText.innerHTML = `Oops, something went wrong! (${err})`;
-    });
-};
-
-filmAddingForm.onsubmit = async (e) => {
+filmsGet.onclick = () => { getRequest('film') };
+filmAddingForm.onsubmit = (e) => {
   e.preventDefault();
-  notificationText.innerHTML = 'Adding film...';
-
-  const fd = new FormData(filmAddingForm);
-
-  data = {
-    title: fd.get('title'),
-    director: fd.get('director'),
-    releaseYear: fd.get('releaseYear'),
-    filmPoster: fd.get('filmPoster'),
-  };
-
-  if (!data.title || !data.director || !data.releaseYear || !data.filmPoster) {
-    notificationText.innerHTML = 'Tried to add a film... but failed!';
-    return alert('Insufficient input!');
-  }
-  sendHttpRequest('POST', 'http://localhost:3000/films', 'film', fd, data)
-    .then((responseData) => {
-      console.log(responseData);
-    })
-    .catch((err) => {
-      console.log(err);
-      notificationText.innerHTML = `Oops, something went wrong! (${err})`;
-    });
+  postRequests('film', filmAddingForm);
 };
+randomFilm.onclick = () => { randomSelect('film', listOfFilms) };
+
 
 
 // chart/list generator/filter
 
-// var sortedAlbums;
-// var sortedBooks;
-// var sortedFilms;
 
-var sortedItems;
-var type;
+let sortedItems;
+let toShow;
+let type;
 
 function getId(str) {
   return str.split('&&')[1];
+};
+
+function chartsAppend(itemList) { // start with this tomorrow
+  charts.innerHTML = '';
+  let i = 0;
+  for (i = 0; i < itemList.length; i++) {
+    if (i === 0) {
+      charts.innerHTML = `${(i + 1).toString()}.  <strong>${itemList[i].title}</strong> by <strong>${(itemType === 'album') ? itemList[i].artist : (itemType === 'book') ? itemList[i].author : itemList[i].director}</strong> (${itemList[i].releaseYear}) <b>`;
+    } else {
+      charts.innerHTML = `${charts.innerHTML}<br> <br>${(i + 1).toString()}.  <strong>${itemList[i].title}</strong> by <strong>${(itemType === 'album') ? itemList[i].artist : (itemType === 'book') ? itemList[i].author : itemList[i].director}</strong> (${itemList[i].releaseYear}) <b>`;
+    };
+  };
 }
+
 
 function listFilter(filter, itemType) {
   charts.style.height = `${scrollHeight}px`;
   sortBtns.style.display = 'block';
-  notificationText.innerHTML = `Sorting ${itemType}s...`
-  charts.innerHTML = '<br> Sorted Items:';
+  randomBtn.style.display = 'block';
+  notificationText.innerHTML = `Sorting ${itemType}s...`;
+  charts.innerHTML = '';
+  chartsText.innerHTML = `<center><br> Sorted ${itemType}s:</center> <br>`;
   if (itemType === 'album') {
     var lst = listOfAlbums;
     type = 'album';
     ifRead.innerHTML = 'Show listened';
     ifUnread.innerHTML = 'Show unlistened';
+    randomItemSelector.innerHTML = 'Get a random album from list';
   } else if (itemType === 'book') {
     var lst = listOfBooks;
     type = 'book';
     ifRead.innerHTML = 'Show read';
     ifUnread.innerHTML = 'Show unread';
+    randomItemSelector.innerHTML = 'Get a random book from list';
   } else if (itemType === 'film') {
     var lst = listOfFilms;
     type = 'film';
     ifRead.innerHTML = 'Show watched';
     ifUnread.innerHTML = 'Show unwatched';
+    randomItemSelector.innerHTML = 'Get a random film from list';
   };
+  let filterList = [];
+  let i = 0;
   if (filter === 'title') {
-    let i = 0;
-    let j = 0;
-    let listOfTitles = [];
-    for (i = 0; i < lst.length; i++) {
-      listOfTitles.push(lst[i].title + '&&' + lst[i].Id);
-    };
-    listOfTitles = listOfTitles.sort();
-    let sortedIds = [];
-    for (i = 0; i < listOfTitles.length; i++) {
-      sortedIds.push(getId(listOfTitles[i]));
-    };
-    sortedItems = [];
-    for (i = 0; i < sortedIds.length; i++) {
-      for (j = 0; j < sortedIds.length; j++) {
-        if (sortedIds[i] === lst[j].Id) {
-          sortedItems.push(lst[j]);
-        };
-      };
-    };
-    for (i = 0; i < sortedItems.length; i++) {
-      charts.innerHTML = charts.innerHTML + '<br> <br>' + (i+1).toString() + `.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`
-    };
-    notificationText.innerHTML = `Sorted ${itemType}s.`
 
+    for (i = 0; i < lst.length; i++) {
+      filterList.push(`${lst[i].title}&&${lst[i].Id}`);
+    };
+    notificationText.innerHTML = `Sorted ${itemType}s by title`;
   } else if (filter === 'artist') {
 
-    let i = 0;
-    let j = 0;
-    let listOfArtists = [];
     if (itemType === 'album') {
       for (i = 0; i < lst.length; i++) {
-        listOfArtists.push(lst[i].artist + '&&' + lst[i].Id);
-      };
+        filterList.push(`${lst[i].artist}&&${lst[i].Id}`);
+      }
     } else if (itemType === 'book') {
       for (i = 0; i < lst.length; i++) {
-        listOfArtists.push(lst[i].author + '&&' + lst[i].Id);
-      };
+        filterList.push(`${lst[i].author}&&${lst[i].Id}`);
+      }
     } else if (itemType === 'film') {
       for (i = 0; i < lst.length; i++) {
-        listOfArtists.push(lst[i].director + '&&' + lst[i].Id);
-      };
-    }
-    listOfArtists = listOfArtists.sort();
-    let sortedIds = [];
-    for (i = 0; i < listOfArtists.length; i++) {
-      sortedIds.push(getId(listOfArtists[i]));
-    };
-    sortedItems = [];
-    for (i = 0; i < sortedIds.length; i++) {
-      for (j = 0; j < sortedIds.length; j++) {
-        if (sortedIds[i] === lst[j].Id) {
-          sortedItems.push(lst[j]);
-        };
+        filterList.push(`${lst[i].director}&&${lst[i].Id}`);
       };
     };
-    for (i = 0; i < sortedItems.length; i++) {
-      charts.innerHTML = charts.innerHTML + '<br> <br>' + (i+1).toString() + `.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`
-    };
-    notificationText.innerHTML = `Sorted ${itemType}s.`
-
+    notificationText.innerHTML = `Sorted ${itemType}s by ${(itemType === 'album') ? 'artist' : (itemType === 'book') ? 'author' : 'director'}`;
   } else if (filter === 'year') {
-    let i = 0;
-    let j = 0;
-    let listOfYears = [];
+
     for (i = 0; i < lst.length; i++) {
-      listOfYears.push(lst[i].releaseYear + '&&' + lst[i].Id);
+      filterList.push(`${lst[i].releaseYear}&&${lst[i].Id}`);
     };
-    listOfYears = listOfYears.sort();
-    let sortedIds = [];
-    for (i = 0; i < listOfYears.length; i++) {
-      sortedIds.push(getId(listOfYears[i]));
-    };
-    sortedItems = [];
-    for (i = 0; i < sortedIds.length; i++) {
-      for (j = 0; j < sortedIds.length; j++) {
-        if (sortedIds[i] === lst[j].Id) {
-          sortedItems.push(lst[j]);
-        };
+    notificationText.innerHTML = `Sorted ${itemType}s by release year`;
+  };
+  filterList = filterList.sort();
+  const sortedIds = [];
+  for (i = 0; i < filterList.length; i++) {
+    sortedIds.push(getId(filterList[i]));
+  };
+  sortedItems = [];
+  for (i = 0; i < sortedIds.length; i++) {
+    for (j = 0; j < sortedIds.length; j++) {
+      if (sortedIds[i] === lst[j].Id) {
+        sortedItems.push(lst[j]);
       };
     };
-    for (i = 0; i < sortedItems.length; i++) {
-      charts.innerHTML = charts.innerHTML + '<br> <br>' + (i+1).toString() + `.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`
+  };
+  toShow = sortedItems;
+  for (i = 0; i < sortedItems.length; i++) {
+    if (i === 0) {
+      charts.innerHTML = `${(i + 1).toString()}.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`;
+    } else {
+      charts.innerHTML = `${charts.innerHTML}<br> <br>${(i + 1).toString()}.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`;
     };
-    notificationText.innerHTML = `Sorted ${itemType}s.`
-
   };
 };
 
 function isRead(itemType, action) {
-  let toShow = [];
+  toShow = [];
   let i = 0;
-  let Ids = [];
-
+  const Ids = [];
+  var lst = (action === 'read') ? read : unread;
   if (itemType === 'album') {
-    var lst = (action === 'read') ? listened : unlistened;
+    notificationText.innerHTML =  (action === 'read') ? 'Displaying albums marked as listened' : 'Displaying albums marked as unlistened'
   } else if (itemType === 'book') {
-    var lst = (action === 'read') ? read : unread;
+    notificationText.innerHTML =  (action === 'read') ? 'Displaying books marked as read' : 'Displaying books marked as unread'
   } else if (itemType === 'film') {
-    var lst = (action === 'read') ? watched : unwatched;
+    notificationText.innerHTML =  (action === 'read') ? 'Displaying films marked as watched' : 'Displaying films marked as unwatched'
   };
-
   for (i = 0; i < lst.length; i++) {
     Ids.push(lst[i].Id);
   };
-
   for (i = 0; i < sortedItems.length; i++) {
     if (Ids.includes(sortedItems[i].Id)) {
       toShow.push(sortedItems[i]);
     };
   };
-
   charts.innerHTML = '';
-  for (i = 0; i < toShow.length; i++) {
-    charts.innerHTML = charts.innerHTML + '<br> <br>' + (i+1).toString() + `.  <strong>${toShow[i].title}</strong> by <strong>${(itemType === 'album') ? toShow[i].artist : (itemType === 'book') ? toShow[i].author : toShow[i].director}</strong> (${toShow[i].releaseYear}) <b>`
+  for (i = 0; i < toShow.length; i++) { //turn this into own function
+    if (i === 0) {
+      charts.innerHTML = `${(i + 1).toString()}.  <strong>${toShow[i].title}</strong> by <strong>${(itemType === 'album') ? toShow[i].artist : (itemType === 'book') ? toShow[i].author : toShow[i].director}</strong> (${toShow[i].releaseYear}) <b>`;
+    } else {
+      charts.innerHTML = `${charts.innerHTML}<br> <br>${(i + 1).toString()}.  <strong>${toShow[i].title}</strong> by <strong>${(itemType === 'album') ? toShow[i].artist : (itemType === 'book') ? toShow[i].author : toShow[i].director}</strong> (${toShow[i].releaseYear}) <b>`;
+    };
   };
 };
+
+
 
 function show(itemType) {
+  notificationText.innerHTML = `Showing all ${itemType}s`;
   charts.innerHTML = '';
   let i = 0;
+  toShow = sortedItems;
   for (i = 0; i < sortedItems.length; i++) {
-    charts.innerHTML = charts.innerHTML + '<br> <br>' + (i+1).toString() + `.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`
+    if (i === 0) {
+      charts.innerHTML = `${(i + 1).toString()}.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`;
+    } else {
+      charts.innerHTML = `${charts.innerHTML}<br> <br>${(i + 1).toString()}.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`;
+    };
   };
 };
 
-albumArtistSort.addEventListener('click', () => {listFilter('artist', 'album')});
-albumTitleSort.addEventListener('click', () => {listFilter('title', 'album')});
-albumYearSort.addEventListener('click', () => {listFilter('year', 'album')});
-bookAuthorSort.addEventListener('click', () => {listFilter('artist', 'book')});
-bookTitleSort.addEventListener('click', () => {listFilter('title', 'book')});
-bookYearSort.addEventListener('click', () => {listFilter('year', 'book')});
-filmDirectorSort.addEventListener('click', () => {listFilter('artist', 'film')});
-filmTitleSort.addEventListener('click', () => {listFilter('title', 'film')});
-filmYearSort.addEventListener('click', () => {listFilter('year', 'film')});
 
-ifRead.addEventListener('click', () => {isRead(type, 'read')});
-ifUnread.addEventListener('click', () => {isRead(type, 'unread')});
-
-showAll.addEventListener('click', () => {show(type)});
+albumArtistSort.addEventListener('click', () => { listFilter('artist', 'album'); });
+albumTitleSort.addEventListener('click', () => { listFilter('title', 'album'); });
+albumYearSort.addEventListener('click', () => { listFilter('year', 'album'); });
+bookAuthorSort.addEventListener('click', () => { listFilter('artist', 'book'); });
+bookTitleSort.addEventListener('click', () => { listFilter('title', 'book'); });
+bookYearSort.addEventListener('click', () => { listFilter('year', 'book'); });
+filmDirectorSort.addEventListener('click', () => { listFilter('artist', 'film'); });
+filmTitleSort.addEventListener('click', () => { listFilter('title', 'film'); });
+filmYearSort.addEventListener('click', () => { listFilter('year', 'film'); });
+randomItemSelector.addEventListener('click', () => { randomSelect(type, toShow); });
+ifRead.addEventListener('click', () => { isRead(type, 'read'); });
+ifUnread.addEventListener('click', () => { isRead(type, 'unread'); });
+showAll.addEventListener('click', () => { show(type); });

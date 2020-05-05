@@ -1,3 +1,5 @@
+// the layout and content of the following has been moderately influenced by this youtube playlist: https://www.youtube.com/playlist?list=PL55RiY5tL51q4D-B63KBnygU6opNPFk_q
+
 const express = require('express');
 
 const app = express();
@@ -38,7 +40,7 @@ app.use((req, res, next) => {
       'PUT, POST, PATCH, DELETE, GET',
     );
     return res.status(200).json({});
-  }
+  };
   next();
 });
 
@@ -62,6 +64,7 @@ app.use((error, req, res, next) => {
       message: error.message,
     },
   });
+  console.log(res);
 });
 
 

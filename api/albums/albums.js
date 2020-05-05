@@ -8,7 +8,7 @@ const id = uniqid();
 
 // set storage for album images
 const storage = multer.diskStorage({
-  destination: './api/albums/albumImages/',
+  destination: './client/albumFiles/',
   filename(req, file, cb) {
     cb(null, id + path.extname(file.originalname));
   },
@@ -28,13 +28,17 @@ router.get('/', (req, res, next) => {
 });
 
 
-router.post('/', upload, (req, res, next) => {
+router.post('/add', upload, (req, res, next) => {
+
+  const filePath = `http://localhost:3000/albumFiles/${req.file.filename}`
+
   // id required to differentiate b/t albums of the same title
   const newAlbum = {
     title: req.body.title,
     artist: req.body.artist,
     releaseYear: req.body.releaseYear,
     albumCover: req.file.destination + req.file.filename,
+    path: filePath,
     Id: id
   };
   // const albumCover = req.file;

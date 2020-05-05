@@ -4,8 +4,7 @@
   "description": "second programming summative: web application with REST API",
   "main": "src/server.js",
   "scripts": {
-    "lint": "eslint src",
-    "lint-routes": "eslint api/routes",
+    "pretest": "eslint src",
     "test": "jest",
     "start": "nodemon src/server.js"
   },
@@ -23,7 +22,8 @@
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
     "jest": "^25.3.0",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.3",
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

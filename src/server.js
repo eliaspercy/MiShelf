@@ -1,10 +1,8 @@
 /* eslint-disable no-console */
 const express = require('express');
 
-const http = require('http'),
-app = require('../app');
-
-// app.use(express.static('client'));
+const http = require('http');
+const app = require('../app');
 
 const port = process.env.PORT || 3000;
 
