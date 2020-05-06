@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
    <head>
@@ -16,7 +18,7 @@
       <!-- <div class="navbar" id="notificationBar">
          <h6>Notification Bar</h6>
          <h6 id="notification"></h6>
-      </div> -->
+         </div> -->
       <main>
          <div class="box">
             <div id="dataAdding" class="accordion">
@@ -34,12 +36,12 @@
                                  <input type="text" name="title" id="albumTitle" placeholder="Title">
                                  <input type="text" name="artist" id="albumArtist" placeholder="Artist">
                                  <input type="text" name="releaseYear" id="albumReleaseYear" placeholder="Release Year">
-                                 <input type="file" name="albumCover" id="albumCover" class="albumCover" placeholder="Cover" accept="image/*">
+                                 <input type="file" name="albumCover" id="albumCover" class="albumCover" accept="image/*">
                                  <button id="albumsPost" type="submit">Add</button>
                               </form>
                            </div>
                            <div class="col-md-3">
-                              <button id="albumsGet" type="button" method="GET">GET</button> 
+                              <button id="albumsGet" type="button">GET</button> 
                            </div>
                         </div>
                      </div>
@@ -47,11 +49,9 @@
                </div>
                <div class="card">
                   <div class="card-header" id="headingTwo">
-                     <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        Books
-                        </button>
-                     </h5>
+                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                     Books
+                     </button>
                   </div>
                   <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#dataAdding">
                      <div class="card-body">
@@ -61,7 +61,7 @@
                                  <input type="text" name="title" id="bookTitle" placeholder="Title">
                                  <input type="text" name="author" id="bookAuthor" placeholder="Author">
                                  <input type="text" name="releaseYear" id="bookReleaseYear" placeholder="Release Year">
-                                 <input type="file" name="bookCover" id="bookCover" placeholder="Cover" accept="image/*">
+                                 <input type="file" name="bookCover" id="bookCover" accept="image/*">
                                  <button id="booksPost" type="submit">Add</button>
                               </form>
                            </div>
@@ -74,11 +74,9 @@
                </div>
                <div class="card">
                   <div class="card-header" id="headingThree">
-                     <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        Films
-                        </button>
-                     </h5>
+                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                     Films
+                     </button>
                   </div>
                   <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#dataAdding">
                      <div class="card-body">
@@ -88,7 +86,7 @@
                                  <input type="text" name="title" id="filmTitle" placeholder="Title">
                                  <input type="text" name="director" id="filmDirector" placeholder="Director">
                                  <input type="text" name="releaseYear" id="filmReleaseYear" placeholder="Release Year">
-                                 <input type="file" name="filmPoster" id="filmPoster" placeholder="Poster" accept="image/*">
+                                 <input type="file" name="filmPoster" id="filmPoster" accept="image/*">
                                  <button id="filmsPost" type="submit">Add</button>
                               </form>
                            </div>
@@ -100,52 +98,44 @@
                   </div>
                </div>
             </div>
-
             <div class="navbar" id="notificationBar">
                <h6>Notification Bar</h6>
                <h6 id="notification"></h6>
             </div>
-
             <div class="row" id="theData">
                <div class="col-md-4">
                   <div id="lists">
                      <div class="card">
                         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#lists">
                            <div class="card-body">
-                            <div class="filters" id="albumsSort">
-                              <center>
+                              <div class="filters" id="albumsSort">
                                  <button id="albumArtistSort" type="button">Sort by Artist</button> 
                                  <button id="albumTitleSort" type="button">Sort by Title</button> 
                                  <button id="albumYearSort" type="button">Sort by Year</button>
-                              </center>
-                              <br>
-                            </div>
-                            <div class="theAlbumsText">
-                                <h5 id="theAlbumsText"></h5>
-                            </div>
-                            <div class="theAlbums" id="scrollable">
-                                <h6 id="theAlbums"></h6>
-                            </div>
-                            <div class="filters" id="randomAlbum">
-                              <br>
-                              <center>
-                                <button id="albumRandomSelect" type="button">Get a random album</button>
-                              </center>
-                            </div>
-                          </div>
+                                 <br>
+                              </div>
+                              <div class="theAlbumsText">
+                                 <h5 id="theAlbumsText"></h5>
+                              </div>
+                              <div class="theAlbums" id="scrollable">
+                                 <h6 id="theAlbums"></h6>
+                              </div>
+                              <div class="filters" id="randomAlbum">
+                                 <br>
+                                 <button id="albumRandomSelect" type="button">Get a random album</button>
+                              </div>
+                           </div>
                         </div>
                      </div>
                      <div class="card">
                         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#lists">
                            <div class="card-body">
-                            <div class="filters" id="booksSort">
-                              <center>
+                              <div class="filters" id="booksSort">
                                  <button id="bookAuthorSort" type="button">Sort by Author</button> 
                                  <button id="bookTitleSort" type="button">Sort by Title</button> 
                                  <button id="bookYearSort" type="button">Sort by Year</button>
-                              </center>
-                              <br>
-                           </div>
+                                 <br>
+                              </div>
                               <div class="theBooksText">
                                  <h5 id="theBooksText"></h5>
                               </div>
@@ -154,9 +144,7 @@
                               </div>
                               <div class="filters" id="randomBook">
                                  <br>
-                                 <center>
-                                    <button id="bookRandomSelect" type="button">Get a random book</button>
-                                 </center>
+                                 <button id="bookRandomSelect" type="button">Get a random book</button>
                               </div>
                            </div>
                         </div>
@@ -164,14 +152,12 @@
                      <div class="card">
                         <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#lists">
                            <div class="card-body">
-                            <div class="filters" id="filmsSort">
-                              <center>
+                              <div class="filters" id="filmsSort">
                                  <button id="filmDirectorSort" type="button">Sort by Director</button> 
                                  <button id="filmTitleSort" type="button">Sort by Title</button> 
                                  <button id="filmYearSort" type="button">Sort by Year</button> 
-                              </center>
-                              <br>
-                           </div>
+                                 <br>
+                              </div>
                               <div class="theFilmsText">
                                  <h5 id="theFilmsText"></h5>
                               </div>
@@ -179,10 +165,8 @@
                                  <h6 id="theFilms"></h6>
                               </div>
                               <div class="filters" id="randomFilm">
-                                <br>
-                                <center>
-                                  <button id="filmRandomSelect" type="button">Get a random film</button>
-                                </center>
+                                 <br>
+                                 <button id="filmRandomSelect" type="button">Get a random film</button>
                               </div>
                            </div>
                         </div>
@@ -192,30 +176,29 @@
                <div class="col-md-4">
                   <div id="sortBtns">
                      <br>
-                     <center>
                         <button id="showAll" type="button">Show All</button> 
                         <button id="read" type="button">Read</button> 
                         <button id="unread" type="button">Unread</button>
-                     </center>
                   </div>
                   <h5 id="theChartsText">
-                    <br>
-                     <center>Sorted items will be displayed here.</center>
+                     <br>
+                     Sorted items will be displayed here.
                   </h5>
                   <div class="theCharts" id="scrollable">
                      <p id="theCharts"></p>
                   </div>
                   <div id="randomBtn">
                      <br>
-                     <center><button id="randomSelect" type="button">Get a random item</button></center>
+                     <button id="randomSelect" type="button">Get a random item</button>
                   </div>
                </div>
                <div class="col-md-4" id="display">
                   <br>
-                  <center><img src='http://localhost:3000/placeholder.jpg' alt="The server appears to be down..." id="pic" class="responsive-img"/></center>
+                  <img src='http://localhost:3000/placeholder.jpg' alt="The server appears to be down..." id="pic" class="responsive-img"/>
                </div>
             </div>
          </div>
       </main>
    </body>
 </html>
+

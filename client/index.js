@@ -297,7 +297,7 @@ function getRequest(itemType) {
       if (responseData.length === 0) {
         theItemsText.innerHTML = `No ${itemType}s have been added! <br> <br>`;
       } else {
-        theItemsText.innerHTML = `${capitalise(itemType)}s: (click GET to update) <br> <br>`;
+        theItemsText.innerHTML = `<br>${capitalise(itemType)}s: (click GET to update) <br> <br>`;
         let i;
         for (i = 0; i < responseData.length; i++) {
           theItems.append(appender(itemType, responseData[i], i, responseData));
