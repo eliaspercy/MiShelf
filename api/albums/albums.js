@@ -41,8 +41,6 @@ router.post('/add', upload, (req, res, next) => {
     path: filePath,
     Id: id
   };
-  // const albumCover = req.file;
-  // console.log(albumCover);
 
   listOfAlbums.push(newAlbum);
 

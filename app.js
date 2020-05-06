@@ -40,7 +40,7 @@ app.use((req, res, next) => {
       'PUT, POST, PATCH, DELETE, GET',
     );
     return res.status(200).json({});
-  };
+  }
   next();
 });
 
@@ -57,15 +57,15 @@ app.use((req, res, next) => {
 });
 
 // handle errors from anywhere in the app
-app.use((error, req, res, next) => {
-  res.status(error.status || 500);
-  res.json({
-    error: {
-      message: error.message,
-    },
-  });
-  console.log(res);
-});
+// app.use((error, req, res, next) => {
+//   res.status(error.status || 500);
+//   res.json({
+//     error: {
+//       message: error.message,
+//     },
+//   });
+//   console.log(res);
+// });
 
 
 module.exports = app;
