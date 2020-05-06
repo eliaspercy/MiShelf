@@ -1,20 +1,23 @@
-// note: possibly add a search bar for items... if have time
-
-// const albumsGet = document.getElementById('albumsGet');
-// const albumAddingForm = document.getElementById('albumAddingForm');
+// initialising constants
 const notificationText = document.getElementById('notification');
-const theAlbums = document.getElementById('theAlbums');
 const theAlbumsText = document.getElementById('theAlbumsText');
-const theBooks = document.getElementById('theBooks');
 const theBooksText = document.getElementById('theBooksText');
-const theFilms = document.getElementById('theFilms');
 const theFilmsText = document.getElementById('theFilmsText');
 const pic = document.getElementById('pic');
-const charts = document.getElementById('theCharts');
-const chartsText = document.getElementById('theChartsText');
+const theAlbums = document.getElementById('theAlbums');
+const theBooks = document.getElementById('theBooks');
+const theFilms = document.getElementById('theFilms');
+const albumsGet = document.getElementById('albumsGet');
+const albumAddingForm = document.getElementById('albumAddingForm');
+const booksGet = document.getElementById('booksGet');
+const bookAddingForm = document.getElementById('bookAddingForm');
+const filmsGet = document.getElementById('filmsGet');
+const filmAddingForm = document.getElementById('filmAddingForm');
 const albumsSort = document.getElementById('albumsSort');
 const booksSort = document.getElementById('booksSort');
 const filmsSort = document.getElementById('filmsSort');
+const charts = document.getElementById('theCharts');
+const chartsText = document.getElementById('theChartsText');
 const sortBtns = document.getElementById('sortBtns');
 const albumArtistSort = document.getElementById('albumArtistSort');
 const albumTitleSort = document.getElementById('albumTitleSort');
@@ -28,15 +31,14 @@ const filmYearSort = document.getElementById('filmYearSort');
 const randomAlbum = document.getElementById('albumRandomSelect');
 const randomBook = document.getElementById('bookRandomSelect');
 const randomFilm = document.getElementById('filmRandomSelect');
+const randomAlbumDiv = document.getElementById('randomAlbum');
+const randomBookDiv = document.getElementById('randomBook');
+const randomFilmDiv = document.getElementById('randomFilm');
 const showAll = document.getElementById('showAll');
 const ifRead = document.getElementById('read');
 const ifUnread = document.getElementById('unread');
 const randomItemSelector = document.getElementById('randomSelect');
 const randomBtn = document.getElementById('randomBtn');
-const randomAlbumDiv = document.getElementById('randomAlbum');
-const randomBookDiv = document.getElementById('randomBook');
-const randomFilmDiv = document.getElementById('randomFilm');
-
 
 let listOfAlbums;
 let listOfBooks;
@@ -48,7 +50,9 @@ const unread = [];
 const { body } = document;
 const html = document.documentElement;
 
-// calculating the clients genuine height and applying values for the height of the picture-containing div in addition to the height of any inter-scrollable divs within the page
+// Calculating the clients genuine height and applying values for the height of the
+// picture-containing div in addition to the height of any inter-scrollable divs
+// within the page.
 const height = Math.max(
   body.scrollHeight,
   body.offsetHeight,
@@ -56,7 +60,6 @@ const height = Math.max(
   html.scrollHeight,
   html.offsetHeight,
 );
-
 const picHeight = height - 100;
 const scrollHeight = picHeight - 195;
 
@@ -69,34 +72,16 @@ theFilmsText.innerHTML = 'Click GET for list of films';
 
 // function for catching errors after a
 function errorCatch(err) {
-  console.log(err);
+  console.log(err); // eslint-disable-line no-console
   notificationText.innerHTML = `Oops, something went wrong! (${err})`;
   if (err.message === 'NetworkError when attempting to fetch resource.') {
-    alert('The server is not running!');
+    alert('The server is not running!'); // eslint-disable-line no-alert
   }
 }
 
-// catch-all function for sending HTTP requests
-const sendHttpRequest = async (method, url, itemType, data, item) => fetch(url, {
-  method,
-  body: (method === 'DELETE') ? JSON.stringify(data) : data,
-  headers: (method === 'DELETE') ? { 'Content-Type': 'application/json' } : {},
-}).then((response) => {
-  sentence(notificationText, method, itemType, item);
-  if (response.status >= 400) {
-    return response.json().then((errResData) => {
-      const error = new Error('Oops');
-      error.data = errResData;
-      throw error;
-    });
-  }
-  if (method === 'GET') {
-    return response.json();
-  }
-  return response;
-});
-
-// function for capitalising the premier letter of a string, applied when inserting itemType variables into the HTML in cases where the itemType is at the beginning of the sentence or is a header
+// function for capitalising the premier letter of a string, applied when inserting
+// itemType variables into the HTML in cases where the itemType is at the beginning
+// of the sentence or is a header
 function capitalise(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -110,30 +95,30 @@ function randGen(list) {
 }
 
 // generates the sentence appearing in the notification bar following a successful HTTP request
-function sentence(textDestination, method, itemType, data) {
+function sentence(method, itemType, data) {
   if (method === 'POST') {
     if (itemType === 'album') {
-      textDestination.innerHTML = `Added the album ${data.title} by ${data.artist}. ${randGen(words)}!`;
+      notificationText.innerHTML = `Added the album ${data.title} by ${data.artist}. ${randGen(words)}!`;
     } else if (itemType === 'book') {
-      textDestination.innerHTML = `Added the book ${data.title} by ${data.author}. ${randGen(words)}!`;
+      notificationText.innerHTML = `Added the book ${data.title} by ${data.author}. ${randGen(words)}!`;
     } else if (itemType === 'film') {
-      textDestination.innerHTML = `Added the film ${data.title}, directed by ${data.director}. ${randGen(words)}!`;
+      notificationText.innerHTML = `Added the film ${data.title}, directed by ${data.director}. ${randGen(words)}!`;
     }
   } else if (method === 'GET') {
     if (itemType === 'album') {
-      textDestination.innerHTML = 'Albums updated.';
+      notificationText.innerHTML = 'Albums updated.';
     } else if (itemType === 'book') {
-      textDestination.innerHTML = 'Books updated.';
+      notificationText.innerHTML = 'Books updated.';
     } else if (itemType === 'film') {
-      textDestination.innerHTML = 'Films updated.';
+      notificationText.innerHTML = 'Films updated.';
     }
   } else if (method === 'DELETE') {
     if (itemType === 'album') {
-      textDestination.innerHTML = `Deleted the album ${data.title} by ${data.artist}. `;
+      notificationText.innerHTML = `Deleted the album ${data.title} by ${data.artist}. `;
     } else if (itemType === 'book') {
-      textDestination.innerHTML = `Deleted the book ${data.title} by ${data.author}. `;
+      notificationText.innerHTML = `Deleted the book ${data.title} by ${data.author}. `;
     } else if (itemType === 'film') {
-      textDestination.innerHTML = `Deleted the film ${data.title}, directed by ${data.director}. `;
+      notificationText.innerHTML = `Deleted the film ${data.title}, directed by ${data.director}. `;
     }
   }
 }
@@ -141,7 +126,6 @@ function sentence(textDestination, method, itemType, data) {
 
 // uses the file location to exhibit the image associated with the corresponding item
 function displayImage(path) {
-  maxHeight = pic.clientHeight;
   pic.src = path;
   pic.style.display = 'block';
   pic.style.maxHeight = `${picHeight}px`;
@@ -154,12 +138,33 @@ function randomSelect(itemType, items) {
   if (items.length === 0) {
     notificationText.innerHTML = "Can't randomly select from nothing!";
   }
-  randomItem = randGen(items);
+  const randomItem = randGen(items);
   notificationText.innerHTML = `Random ${itemType} selected: ${randomItem.title} by ${(itemType === 'album') ? randomItem.artist : (itemType === 'book') ? randomItem.author : randomItem.director}. ${randGen(words)}!`;
   displayImage(randomItem.path);
 }
 
-// function for creating the lists via appending new elements to the HTML containing variable information
+// catch-all function for sending HTTP requests
+const sendHttpRequest = async (method, url, itemType, data, item) => fetch(url, {
+  method,
+  body: (method === 'DELETE') ? JSON.stringify(data) : data,
+  headers: (method === 'DELETE') ? { 'Content-Type': 'application/json' } : {},
+}).then((response) => {
+  sentence(method, itemType, item);
+  if (response.status >= 400) {
+    return response.json().then((errResData) => {
+      const error = new Error('Oops');
+      error.data = errResData;
+      throw error;
+    });
+  }
+  if (method === 'GET') {
+    return response.json();
+  }
+  return response;
+});
+
+// function for creating the lists via appending new elements to the
+// HTML containing variable information
 function appender(itemType, data, i) {
   const newItem = document.createElement('DIV');
   const newLine = document.createElement('P');
@@ -167,10 +172,8 @@ function appender(itemType, data, i) {
   const displayBtn = document.createElement('BUTTON');
   const whiteSpace = document.createElement('P');
   whiteSpace.innerHTML = '<br>';
-  newLine.setAttribute('id', itemType + (i + 1).toString());
-  newLine.setAttribute('class', data.title);
-  tempIds = [];
-  untempIds = [];
+  const tempIds = [];
+  const untempIds = [];
   let k = 0;
   for (k = 0; k < read.length; k++) {
     tempIds.push(read[k].Id);
@@ -198,22 +201,24 @@ function appender(itemType, data, i) {
   deleteBtn.onclick = () => {
     notificationText.innerHTML = `Deleting ${itemType}...`;
     let j = 0;
-    console.log(read)
     for (j = 0; i < read.length; j++) {
+      if (read.length === 0) {
+        break;
+      }
       if (read[j].Id === data.Id) {
         read.splice(j, 1);
         break;
-      };
-    };
-    console.log(read)
-    console.log(unread)
+      }
+    }
     for (j = 0; j < unread.length; j++) {
+      if (unread.length === 0) {
+        break;
+      }
       if (unread[j].Id === data.Id) {
         unread.splice(j, 1);
         break;
-      };
-    };
-    console.log(unread)
+      }
+    }
     sendHttpRequest('DELETE', `http://localhost:3000/${itemType}s/${data.Id}`, itemType, data, data)
       .catch((err) => {
         errorCatch(err);
@@ -232,7 +237,7 @@ function appender(itemType, data, i) {
       newLine.style.color = 'red';
       unread.push(data);
       let j = 0;
-      for (j = 0; j < read.length; j++) {
+      for (j = 0; j <= read.length; j++) {
         if (read[j].Id === data.Id) {
           read.splice(j, 1);
           break;
@@ -242,7 +247,7 @@ function appender(itemType, data, i) {
     } else {
       newLine.style.color = null;
       let j = 0;
-      for (j = 0; j < unread.length; j++) {
+      for (j = 0; j <= unread.length; j++) {
         if (unread[j].Id === data.Id) {
           unread.splice(j, 1);
           break;
@@ -257,6 +262,7 @@ function appender(itemType, data, i) {
   newItem.append(whiteSpace);
   return newItem;
 }
+
 
 let theItems;
 let itemsSort;
@@ -288,7 +294,6 @@ function getRequest(itemType) {
   sendHttpRequest('GET', `http://localhost:3000/${itemType}s`, itemType)
     .then((responseData) => {
       pic.setAttribute('alt', `${capitalise(itemType)} has been deleted...`);
-      console.log(responseData);
       if (responseData.length === 0) {
         theItemsText.innerHTML = `No ${itemType}s have been added! <br> <br>`;
       } else {
@@ -312,9 +317,10 @@ function getRequest(itemType) {
 }
 
 
-function postRequests(itemType, form) {
+function postRequests(itemType, form) { // eslint-disable-line consistent-return
   notificationText.innerHTML = `Adding ${itemType}s...`;
   const fd = new FormData(form);
+  let data;
   if (itemType === 'album') {
     data = {
       title: fd.get('title'),
@@ -337,13 +343,16 @@ function postRequests(itemType, form) {
       filmPoster: fd.get('filmPoster'),
     };
   }
-  if (!data.title || !(data.artist || data.author || data.director) || !data.releaseYear || !(data.albumCover || data.bookCover || data.filmPoster)) {
+  if (
+    !data.title
+    || !(data.artist || data.author || data.director)
+    || !data.releaseYear
+    || !(data.albumCover || data.bookCover || data.filmPoster)
+  ) {
     notificationText.innerHTML = `Tried to add ${(itemType === 'album') ? 'an' : 'a'} ${itemType}... but failed!`;
-    return alert('Insufficient input!');
+    return alert('Insufficient input!'); // eslint-disable-line no-alert
   }
   sendHttpRequest('POST', `http://localhost:3000/${itemType}s/add`, itemType, fd, data)
-    .then((responseData) => {
-    })
     .catch((err) => {
       errorCatch(err);
     });
@@ -379,7 +388,6 @@ randomFilm.onclick = () => { randomSelect('film', listOfFilms); };
 
 // chart/list generator/filter
 
-
 let sortedItems;
 let toShow;
 let type;
@@ -388,7 +396,7 @@ function getId(str) {
   return str.split('&&')[1];
 }
 
-function chartsAppend(itemList) { // start with this tomorrow
+function chartsAppend(itemList, itemType) {
   charts.innerHTML = '';
   let i = 0;
   for (i = 0; i < itemList.length; i++) {
@@ -402,6 +410,7 @@ function chartsAppend(itemList) { // start with this tomorrow
 
 
 function listFilter(filter, itemType) {
+  let lst;
   charts.style.height = `${scrollHeight}px`;
   sortBtns.style.display = 'block';
   randomBtn.style.display = 'block';
@@ -409,19 +418,19 @@ function listFilter(filter, itemType) {
   charts.innerHTML = '';
   chartsText.innerHTML = `<center><br> Sorted ${itemType}s:</center> <br>`;
   if (itemType === 'album') {
-    var lst = listOfAlbums;
+    lst = listOfAlbums;
     type = 'album';
     ifRead.innerHTML = 'Show listened';
     ifUnread.innerHTML = 'Show unlistened';
     randomItemSelector.innerHTML = 'Get a random album from list';
   } else if (itemType === 'book') {
-    var lst = listOfBooks;
+    lst = listOfBooks;
     type = 'book';
     ifRead.innerHTML = 'Show read';
     ifUnread.innerHTML = 'Show unread';
     randomItemSelector.innerHTML = 'Get a random book from list';
   } else if (itemType === 'film') {
-    var lst = listOfFilms;
+    lst = listOfFilms;
     type = 'film';
     ifRead.innerHTML = 'Show watched';
     ifUnread.innerHTML = 'Show unwatched';
@@ -429,6 +438,7 @@ function listFilter(filter, itemType) {
   }
   let filterList = [];
   let i = 0;
+  let j = 0;
   if (filter === 'title') {
     for (i = 0; i < lst.length; i++) {
       filterList.push(`${lst[i].title}&&${lst[i].Id}`);
@@ -498,29 +508,15 @@ function isRead(itemType, action) {
       toShow.push(sortedItems[i]);
     }
   }
-  charts.innerHTML = '';
-  for (i = 0; i < toShow.length; i++) { // turn this into own function
-    if (i === 0) {
-      charts.innerHTML = `${(i + 1).toString()}.  <strong>${toShow[i].title}</strong> by <strong>${(itemType === 'album') ? toShow[i].artist : (itemType === 'book') ? toShow[i].author : toShow[i].director}</strong> (${toShow[i].releaseYear}) <b>`;
-    } else {
-      charts.innerHTML = `${charts.innerHTML}<br> <br>${(i + 1).toString()}.  <strong>${toShow[i].title}</strong> by <strong>${(itemType === 'album') ? toShow[i].artist : (itemType === 'book') ? toShow[i].author : toShow[i].director}</strong> (${toShow[i].releaseYear}) <b>`;
-    }
-  }
+  chartsAppend(toShow, itemType);
 }
 
 
 function show(itemType) {
   notificationText.innerHTML = `Showing all ${itemType}s`;
   charts.innerHTML = '';
-  let i = 0;
   toShow = sortedItems;
-  for (i = 0; i < sortedItems.length; i++) {
-    if (i === 0) {
-      charts.innerHTML = `${(i + 1).toString()}.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`;
-    } else {
-      charts.innerHTML = `${charts.innerHTML}<br> <br>${(i + 1).toString()}.  <strong>${sortedItems[i].title}</strong> by <strong>${(itemType === 'album') ? sortedItems[i].artist : (itemType === 'book') ? sortedItems[i].author : sortedItems[i].director}</strong> (${sortedItems[i].releaseYear}) <b>`;
-    }
-  }
+  chartsAppend(toShow, itemType);
 }
 
 
