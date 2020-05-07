@@ -1,3 +1,6 @@
+/* eslint no-unused-vars: 0 */
+/* eslint no-console: 0 */
+
 const express = require('express');
 const fs = require('fs');
 const multer = require('multer');
@@ -29,8 +32,7 @@ router.get('/', (req, res, next) => {
 
 
 router.post('/add', upload, (req, res, next) => {
-
-  const filePath = `http://localhost:3000/albumFiles/${req.file.filename}`
+  const filePath = `http://localhost:3000/albumFiles/${req.file.filename}`;
 
   // id required to differentiate b/t albums of the same title
   const newAlbum = {
@@ -39,7 +41,7 @@ router.post('/add', upload, (req, res, next) => {
     releaseYear: req.body.releaseYear,
     albumCover: req.file.destination + req.file.filename,
     path: filePath,
-    Id: id
+    Id: id,
   };
 
   listOfAlbums.push(newAlbum);

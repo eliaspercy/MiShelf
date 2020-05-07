@@ -269,6 +269,7 @@ let itemsSort;
 let theItemsText;
 let randomItemDiv;
 
+// generic catch-all function for all get requests in this app
 function getRequest(itemType) {
   notificationText.innerHTML = `Retrieving ${itemType}s...`;
   if (itemType === 'album') {
@@ -316,7 +317,7 @@ function getRequest(itemType) {
     });
 }
 
-
+// generic catch-all function for all post requests in this app
 function postRequests(itemType, form) { // eslint-disable-line consistent-return
   notificationText.innerHTML = `Adding ${itemType}s...`;
   const fd = new FormData(form);
@@ -392,10 +393,12 @@ let sortedItems;
 let toShow;
 let type;
 
+// obtains the part of a string occurring after "&&", for when dealing with filters
 function getId(str) {
   return str.split('&&')[1];
 }
 
+// function for appending the data to the middle div
 function chartsAppend(itemList, itemType) {
   charts.innerHTML = '';
   let i = 0;
@@ -408,7 +411,7 @@ function chartsAppend(itemList, itemType) {
   }
 }
 
-
+// function for dealing with the filters, for sorting items
 function listFilter(filter, itemType) {
   let lst;
   charts.style.height = `${scrollHeight}px`;
@@ -488,6 +491,7 @@ function listFilter(filter, itemType) {
   }
 }
 
+// function for dealing with filtering read and unread items
 function isRead(itemType, action) {
   toShow = [];
   let i = 0;
@@ -511,7 +515,7 @@ function isRead(itemType, action) {
   chartsAppend(toShow, itemType);
 }
 
-
+// for displaying all items
 function show(itemType) {
   notificationText.innerHTML = `Showing all ${itemType}s`;
   charts.innerHTML = '';
@@ -519,7 +523,7 @@ function show(itemType) {
   chartsAppend(toShow, itemType);
 }
 
-
+// event listeners
 albumArtistSort.addEventListener('click', () => { listFilter('artist', 'album'); });
 albumTitleSort.addEventListener('click', () => { listFilter('title', 'album'); });
 albumYearSort.addEventListener('click', () => { listFilter('year', 'album'); });

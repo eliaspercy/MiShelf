@@ -33,7 +33,6 @@ input {
 #scrollable {
   flex-grow : 1;
   overflow-y: auto;
-  /* background-color: teal; */
 }
 
 .navbar {
@@ -50,7 +49,7 @@ input {
 }
 
 .box {
-  margin-top: 1px; /* Add a top margin to avoid content overlay */
+  margin-top: 1px; 
 }
 
 #display {
@@ -59,7 +58,6 @@ input {
 }
 
 #pic {
-  /* display: none; */
   width: 90%;
   height: auto;
   display: block;

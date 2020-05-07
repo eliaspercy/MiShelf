@@ -1,4 +1,9 @@
-// note: essentially all of the comments that appear in the "albums.js" file are relevant, perhaps only with slight alterations, to this file also, as the following is substantially based off of that file - with minor adjustments 
+/* eslint no-unused-vars: 0 */
+/* eslint no-console: 0 */
+
+// note: essentially all of the comments that appear in the "albums.js" file are relevant,
+// perhaps only with slight alterations, to this file also, as the following is substantially
+// based off of that file - with minor adjustments
 
 const express = require('express');
 const fs = require('fs');
@@ -30,7 +35,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/add', upload, (req, res, next) => {
-  const filePath = `http://localhost:3000/filmFiles/${req.file.filename}`
+  const filePath = `http://localhost:3000/filmFiles/${req.file.filename}`;
   const newFilm = {
     title: req.body.title,
     director: req.body.director,
