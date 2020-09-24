@@ -1,6 +1,6 @@
 # prog-summative-2020-master
 
-The primary purpose of this project was the construction of a dynamic website using static HTML pages loading dynamic JSON content from a server via AJAX, with the server written in nodejs to provide the JSON content through a REST API.
+The primary purpose of this project was the construction of a 'single page app', which in essence is a dynamic website using static HTML pages loading dynamic JSON content from a server via AJAX, with the server written in nodejs to provide the JSON content through a REST API. The API utilised GET, POST, and DELETE methods, and included image uploading capabilities. 
 
 To run, locate this folder in the terminal, first type 'npm install' and then type 'npm start' for the server to begin. The site can be accessed via the index.html file in the client folder or via http://localhost:3000/
 
